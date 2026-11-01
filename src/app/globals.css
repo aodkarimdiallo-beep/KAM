@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/*
+ * DIGITAL TWIN — Design system
+ *
+ * Deux niveaux de jetons :
+ * 1. Palette brute (couleurs de la marque) — ne pas utiliser directement dans les composants.
+ * 2. Jetons sémantiques (canvas, surface, line, fg, muted, accent…) — à utiliser partout.
+ * Changer l'apparence du produit = modifier les jetons sémantiques, jamais les composants.
+ */
+
+@theme {
+  /* 1. Palette de marque */
+  --color-ink-950: #0b0b0c;
+  --color-ink-900: #151311;
+  --color-umber-900: #241a16;
+  --color-umber-700: #38251d;
+  --color-bronze: #a8794f;
+  --color-copper: #c18a62;
+  --color-sand: #e8d8c8;
+  --color-ivory: #f5f1ec;
+  --color-stone: #a39a92;
+
+  /* 2. Jetons sémantiques */
+  --color-canvas: var(--color-ink-950);
+  --color-surface: var(--color-ink-900);
+  --color-surface-raised: #1b1714;
+  --color-surface-warm: var(--color-umber-900);
+  --color-line: rgb(232 216 200 / 0.08);
+  --color-line-strong: rgb(232 216 200 / 0.16);
+  --color-fg: var(--color-ivory);
+  --color-fg-soft: var(--color-sand);
+  --color-muted: var(--color-stone);
+  --color-accent: var(--color-copper);
+  --color-accent-strong: var(--color-bronze);
+  --color-accent-fg: var(--color-ink-950);
+  --color-danger: #d27a6a;
+  --color-success: #9fb48a;
+
+  /* Typographie */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+
+  /* Formes et ombres */
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 0 0 rgb(245 241 236 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
+  --shadow-glow: 0 0 0 1px rgb(193 138 98 / 0.25), 0 8px 24px -12px rgb(193 138 98 / 0.35);
+
+  /* Animations */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-up: fade-up 0.5s var(--ease-soft) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    /* Dégradé chaud très discret en haut de page */
+    background-image:
+      radial-gradient(1200px 600px at 85% -10%, rgb(56 37 29 / 0.45), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgb(36 26 22 / 0.5), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background-color: rgb(193 138 98 / 0.35);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Fine bordure dégradée bronze, réservée aux éléments importants */
+@utility ring-bronze {
+  box-shadow: var(--shadow-glow);
+}
