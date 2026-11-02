@@ -26,7 +26,7 @@ Navigateur (React, Client Components minimaux)
         │  HTTPS — cookie de session Supabase (httpOnly)
         ▼
 Next.js sur Vercel
-  ├─ proxy.ts ............ rafraîchissement de session, protection des routes   (étape 3)
+  ├─ proxy.ts ............ rafraîchissement de session, protection des routes
   ├─ Server Components ... lecture des données (RLS appliquée)
   ├─ Server Actions ...... mutations validées par Zod
   ├─ Route Handlers ...... streaming du chat, webhooks, santé
@@ -55,7 +55,8 @@ Supabase
    ├─ app/                   Routes Next.js (présentation uniquement)
    │  ├─ (app)/              Espace connecté : dashboard, twin, chat, memory,
    │  │                      projects, decisions, agents, research, settings
-   │  ├─ (auth)/             Connexion / inscription                       (étape 3)
+   │  ├─ (auth)/             Connexion / inscription
+   │  ├─ auth/callback/      Arrivée des liens e-mail (confirmation, lien magique)
    │  └─ api/                Route Handlers (health, chat streaming…)
    ├─ components/
    │  ├─ ui/                 Design system (Button, Card, Badge, PageHeader…)
@@ -72,7 +73,7 @@ Supabase
 
 Règle d'import : `app/` → `components/` → `server/` / `domain/` / `lib/`. Le dossier `domain/` ne dépend de rien d'autre.
 
-## 5. Modèle de données (cible étape 3)
+## 5. Modèle de données (migrations dans `supabase/migrations/`)
 
 Toutes les tables privées portent `user_id uuid not null references auth.users on delete cascade`,
 la RLS activée, et une politique `user_id = (select auth.uid())`.

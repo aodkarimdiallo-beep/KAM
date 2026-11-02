@@ -1,13 +1,13 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Brand } from "./brand";
 import { NavLinks } from "./nav-links";
 import { SidebarFooter } from "./sidebar-footer";
 
 /** Barre supérieure + tiroir de navigation pour les écrans < 1024 px. */
-export function MobileNav() {
+export function MobileNav({ account }: { account?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const closeButton = useRef<HTMLButtonElement>(null);
   const openButton = useRef<HTMLButtonElement>(null);
@@ -74,7 +74,10 @@ export function MobileNav() {
             <div className="mt-8 flex-1 overflow-y-auto">
               <NavLinks onNavigate={() => setOpen(false)} />
             </div>
-            <SidebarFooter />
+            <div className="flex flex-col gap-3">
+              <SidebarFooter />
+              {account}
+            </div>
           </div>
         </div>
       )}

@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { Brand } from "./brand";
 import { NavLinks } from "./nav-links";
 import { SidebarFooter } from "./sidebar-footer";
+import { UserMenu } from "./user-menu";
 
 export function Sidebar() {
   return (
@@ -9,7 +11,12 @@ export function Sidebar() {
       <div className="mt-10 flex-1 overflow-y-auto pr-1">
         <NavLinks />
       </div>
-      <SidebarFooter />
+      <div className="flex flex-col gap-3">
+        <SidebarFooter />
+        <Suspense fallback={null}>
+          <UserMenu />
+        </Suspense>
+      </div>
     </aside>
   );
 }

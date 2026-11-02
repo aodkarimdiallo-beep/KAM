@@ -5,12 +5,41 @@ L'état affiché dans l'application provient de `src/config/modules.ts` (`CURREN
 | Étape | Contenu | État |
 | --- | --- | --- |
 | 1 | Audit et planification | ✅ Terminé |
-| 2 | Fondations : Next.js, design system, navigation, pages, structure backend, clients Supabase | ✅ Livré (voir ci-dessous) |
-| 3 | Authentification (inscription, connexion, déconnexion), profil, schéma SQL, migrations, RLS, stockage privé, `proxy.ts` | ⏭ Suivante |
+| 2 | Fondations : Next.js, design system, navigation, pages, structure backend, clients Supabase | ✅ Livré |
+| 3 | Authentification (inscription, connexion, déconnexion), profil, schéma SQL, migrations, RLS, stockage privé, `proxy.ts` | 🟡 Code livré et testé localement — reste à brancher sur Supabase (voir ci-dessous) |
 | 4 | Couche AI Provider, Gemini, chat en streaming, historique, gestion du contexte, journal des coûts, limitation de débit | |
 | 5 | Mémoire : extraction, catégorisation, embeddings, recherche hybride, correction et validation, fusion des doublons | |
 | 6 | Documents (PDF, DOCX, TXT, CSV), recherche Internet avec sources, agents spécialisés et Agent Factory | |
 | 7 | Tests de bout en bout, revue de sécurité, accessibilité, déploiement Vercel | |
+
+## Étape 3 — ce qui a été livré
+
+**Base de données** (`supabase/migrations/`, 4 migrations versionnées) :
+- 19 tables : profils, réglages, conversations, messages, documents et extraits, mémoire, sources et
+  révisions de souvenirs, projets, tâches de projet, objectifs, décisions, agents, outils, exécutions,
+  tâches/approbations, journal d'audit, usage IA.
+- Row Level Security sur **toutes** les tables ; le rôle `anon` n'a aucun accès.
+- Clés étrangères composites `(id, user_id)` : impossible de rattacher une donnée à l'objet d'un autre utilisateur.
+- Garde-fous mémoire en base : le système ne peut pas créer de fait confirmé ; chaque correction est historisée.
+- Colonnes sensibles protégées (`role`, `plan`, quotas) ; journal d'audit et usage non falsifiables.
+- pgvector (vecteurs 1536 dimensions, index HNSW) et recherche plein texte prêts pour l'étape 5.
+- Bucket de stockage privé `documents`, un dossier par utilisateur.
+
+**Application** :
+- Inscription, connexion par mot de passe ou lien e-mail, déconnexion, callback des liens e-mail.
+- `src/proxy.ts` : rafraîchit la session, protège **toutes** les pages par défaut, 401 sur l'API.
+- Protection contre les redirections ouvertes et l'énumération des comptes.
+- Settings → Profil modifiable ; menu utilisateur ; checklist du Dashboard reliée à l'état réel.
+
+**Vérifié** :
+- 35 tests de sécurité SQL exécutés sur un vrai PostgreSQL 16 + pgvector (`npm run test:db`) ;
+- 42 tests unitaires ; lint ; TypeScript ; build de production ;
+- navigateur : redirections, erreurs de formulaire, message « service injoignable » (ce test a révélé
+  puis permis de corriger un faux message de succès).
+
+**Pas encore vérifié** : le parcours complet avec le vrai projet Supabase (inscription, e-mail,
+connexion réelle). L'environnement de développement n'a pas accès à Supabase. Prochaine action :
+suivre [`docs/SUPABASE_SETUP.md`](SUPABASE_SETUP.md), puis tester ensemble.
 
 ## Étape 2 — ce qui a été livré
 
@@ -24,13 +53,6 @@ L'état affiché dans l'application provient de `src/config/modules.ts` (`CURREN
 - En-têtes de sécurité HTTP ; sonde `/api/health`.
 - 17 tests unitaires (Vitest).
 
-**Non testé à ce stade** : les clients Supabase n'ont pas encore été exercés contre un vrai projet (aucun identifiant fourni) ; ils le seront à l'étape 3.
-
-## Ce dont l'étape 3 a besoin de votre part
-
-1. Créer un projet sur https://supabase.com (région UE conseillée, ex. Frankfurt ou Paris).
-2. Copier dans `.env.local` : l'URL du projet, la clé *publishable*, la clé *secret*.
-3. Choisir : connexion par e-mail + mot de passe, lien magique, ou les deux ? (Recommandation : les deux.)
 
 ## Coûts à anticiper (ordre de grandeur, à vérifier sur les sites officiels)
 

@@ -2,6 +2,7 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { ConfigurationError } from "@/lib/env/schema";
+import type { Database } from "@/server/db/database.types";
 import { getServerEnv } from "@/lib/env/server";
 
 /**
@@ -21,7 +22,7 @@ export async function createSupabaseServerClient() {
   }
 
   const cookieStore = await cookies();
-  return createServerClient(url, key, {
+  return createServerClient<Database>(url, key, {
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll: (cookiesToSet) => {
@@ -31,7 +32,7 @@ export async function createSupabaseServerClient() {
           }
         } catch {
           // Appelé depuis un Server Component (cookies en lecture seule) :
-          // le rafraîchissement de session est assuré par le proxy (étape 3).
+          // le rafraîchissement de session est assuré par le proxy (src/proxy.ts).
         }
       },
     },

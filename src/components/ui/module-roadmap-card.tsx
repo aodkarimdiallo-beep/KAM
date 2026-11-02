@@ -14,10 +14,13 @@ export function ModuleRoadmapCard({ module: m }: { module: AppModule }) {
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-accent-strong">
             Étape {m.stage} · {DEVELOPMENT_STAGES[m.stage]}
           </p>
-          <h2 className="mt-2 font-display text-2xl text-fg">Module en développement</h2>
+          <h2 className="mt-2 font-display text-2xl text-fg">
+            {m.status === "in_progress" ? "Prochainement dans ce module" : "Module en développement"}
+          </h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Cette section n&apos;est pas encore connectée. Rien ici n&apos;est simulé : les fonctionnalités
-            apparaîtront au fur et à mesure qu&apos;elles seront construites et testées.
+            {m.status === "in_progress"
+              ? "Une partie de cette section fonctionne déjà. Les éléments ci-contre arrivent ensuite, une fois construits et testés."
+              : "Cette section n'est pas encore connectée. Rien ici n'est simulé : les fonctionnalités apparaîtront au fur et à mesure qu'elles seront construites et testées."}
           </p>
         </div>
         <ul className="grid gap-2.5 sm:grid-cols-2">

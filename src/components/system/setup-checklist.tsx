@@ -2,6 +2,8 @@ import { Check } from "lucide-react";
 import { connection } from "next/server";
 import { getServerEnv } from "@/lib/env/server";
 import { cn } from "@/lib/utils/cn";
+import { getCurrentUser } from "@/server/auth/session";
+import { getMyProfile } from "@/server/profile/queries";
 import { getConfigurationStatus } from "@/server/system/configuration-status";
 
 interface Step {
@@ -15,12 +17,23 @@ interface Step {
 export async function SetupChecklist() {
   await connection();
   const status = Object.fromEntries(getConfigurationStatus(getServerEnv()).map((s) => [s.key, s.configured]));
+  const user = await getCurrentUser();
+  const profile = user ? await getMyProfile() : null;
+  const profileComplete = Boolean(profile?.full_name && (profile.headline || profile.bio));
 
   const steps: Step[] = [
     { label: "Connecter Supabase", hint: "Base de données, authentification, stockage", done: Boolean(status.supabase) },
     { label: "Ajouter une clé d'IA", hint: "Gemini en premier fournisseur", done: Boolean(status.ai) },
-    { label: "Créer votre compte", hint: "Disponible à l'étape 3", done: null },
-    { label: "Compléter votre profil", hint: "Disponible à l'étape 3", done: null },
+    {
+      label: "Créer votre compte",
+      hint: status.supabase ? "Inscription et connexion sécurisées" : "Nécessite Supabase",
+      done: status.supabase ? Boolean(user) : null,
+    },
+    {
+      label: "Compléter votre profil",
+      hint: "Nom complet et présentation, dans Settings",
+      done: user ? profileComplete : null,
+    },
     { label: "Enregistrer un premier souvenir", hint: "Disponible à l'étape 5", done: null },
   ];
 

@@ -1,13 +1,17 @@
 # Migrations SQL
 
-Les migrations versionnées de la base de données seront ajoutées ici à l'**étape 3**
-(schéma complet, Row Level Security, pgvector, stockage privé).
+Schéma versionné de la base. Guide d'application pas à pas : [`docs/SUPABASE_SETUP.md`](../../docs/SUPABASE_SETUP.md).
 
-Convention : `AAAAMMJJHHMMSS_description.sql`, appliquées dans l'ordre avec la CLI Supabase :
+| Fichier | Contenu |
+| --- | --- |
+| `…000100_core.sql` | Extensions, types, profils, réglages, création automatique du profil |
+| `…000200_projects.sql` | Projets, tâches de projet, objectifs, décisions |
+| `…000300_knowledge.sql` | Conversations, messages, documents, mémoire, sources, révisions |
+| `…000400_agents_and_operations.sql` | Agents, approbations, audit, usage IA, stockage privé |
 
-```bash
-npx supabase link --project-ref <votre-project-ref>
-npx supabase db push
-```
+Règles :
+- une migration déjà appliquée n'est **jamais modifiée** : on en crée une nouvelle ;
+- toute nouvelle table privée : `user_id`, RLS activée, politique propriétaire, `revoke all … from anon` ;
+- tester avant d'appliquer : `npm run test:db` (voir `scripts/test-db.sh`).
 
-Une migration déjà appliquée en production n'est jamais modifiée : on en crée une nouvelle.
+Avec la CLI : `npx supabase link --project-ref <ref>` puis `npx supabase db push`.

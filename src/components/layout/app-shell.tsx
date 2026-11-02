@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { MobileNav } from "./mobile-nav";
 import { Sidebar } from "./sidebar";
+import { UserMenu } from "./user-menu";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -13,7 +14,13 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <MobileNav />
+        <MobileNav
+          account={
+            <Suspense fallback={null}>
+              <UserMenu />
+            </Suspense>
+          }
+        />
         <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8 sm:py-12">
           {children}
         </main>

@@ -34,7 +34,7 @@ export const DEVELOPMENT_STAGES = {
 export type DevelopmentStage = keyof typeof DEVELOPMENT_STAGES;
 
 /** Étape de développement en cours — à faire évoluer à chaque livraison. */
-export const CURRENT_STAGE: DevelopmentStage = 2;
+export const CURRENT_STAGE: DevelopmentStage = 3;
 
 export interface AppModule {
   id: string;
@@ -47,7 +47,7 @@ export interface AppModule {
   status: ModuleStatus;
   /** Étape à laquelle le module devient fonctionnel. */
   stage: DevelopmentStage;
-  /** Ce que le module permettra de faire — affiché tant qu'il n'est pas livré. */
+  /** Ce qui reste à livrer dans le module — affiché tant qu'il n'est pas terminé. */
   capabilities: string[];
 }
 
@@ -191,9 +191,9 @@ export const APP_MODULES = [
     status: "in_progress",
     stage: 3,
     capabilities: [
-      "Profil et préférences",
-      "Sécurité et sessions",
-      "Choix du fournisseur IA",
+      "Sécurité et gestion des sessions",
+      "Choix du fournisseur IA (étape 4)",
+      "Préférences de mémoire (étape 5)",
       "Export des données et suppression du compte",
     ],
   },
