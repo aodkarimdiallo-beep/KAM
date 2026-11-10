@@ -27,6 +27,7 @@ describe("getConfigurationStatus", () => {
     const status = byKey({ AI_DEFAULT_PROVIDER: "anthropic", GEMINI_API_KEY: "k" });
     expect(status.ai?.configured).toBe(false);
     expect(status.ai?.missing).toEqual(["ANTHROPIC_API_KEY"]);
+    expect(byKey({ GEMINI_API_KEY: "k" }).ai?.missing).toEqual(["GEMINI_CHAT_MODEL"]);
   });
 
   it("n'expose jamais la valeur des secrets", () => {

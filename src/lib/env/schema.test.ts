@@ -23,4 +23,11 @@ describe("parseServerEnv", () => {
   it("rejette un fournisseur IA inconnu", () => {
     expect(() => parseServerEnv({ AI_DEFAULT_PROVIDER: "inconnu" })).toThrow(ConfigurationError);
   });
+
+  it("lit les nombres et rejette les valeurs invalides", () => {
+    expect(parseServerEnv({ CHAT_MAX_REQUESTS_PER_MINUTE: "20" }).CHAT_MAX_REQUESTS_PER_MINUTE).toBe(20);
+    expect(parseServerEnv({ AI_PRICE_INPUT_USD_PER_MTOK: "" }).AI_PRICE_INPUT_USD_PER_MTOK).toBeUndefined();
+    expect(() => parseServerEnv({ CHAT_MAX_REQUESTS_PER_MINUTE: "beaucoup" })).toThrow(ConfigurationError);
+    expect(() => parseServerEnv({ AI_PRICE_OUTPUT_USD_PER_MTOK: "-1" })).toThrow(ConfigurationError);
+  });
 });

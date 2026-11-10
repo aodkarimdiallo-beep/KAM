@@ -4,9 +4,9 @@ Plateforme d'intelligence personnelle : une IA qui apprend à connaître une per
 ses connaissances, ses projets, ses décisions — pour l'assister de façon contextualisée.
 Le Twin modélise une façon de penser et de travailler ; il ne prétend jamais être la personne.
 
-> **État actuel : étape 3 (authentification et base de données)** — code livré et testé localement,
-> branchement au projet Supabase en cours : voir [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md).
-> IA, mémoire et agents arrivent aux étapes 4 à 6 — voir [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **État actuel : étape 4 (le cerveau : conversation avec l'IA).** Authentification et base de données
+> installées sur Supabase ; conversation avec l'IA livrée et testée avec une IA simulée, en attente d'une
+> clé Gemini valide. Mémoire et agents : étapes 5 et 6 — voir [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Démarrage
 
@@ -30,7 +30,7 @@ L'application démarre même sans configuration : la page **Settings** indique q
 | `npm run typecheck` | Génération des types de routes + TypeScript strict |
 | `npm test` | Tests unitaires (Vitest) |
 | `npm run check` | Les trois vérifications d'un coup |
-| `npm run test:db` | Migrations + 37 tests de sécurité SQL sur un PostgreSQL local jetable (`DATABASE_ADMIN_URL`) |
+| `npm run test:db` | Migrations + 41 tests de sécurité SQL sur un PostgreSQL local jetable (`DATABASE_ADMIN_URL`) |
 
 ## Stack
 

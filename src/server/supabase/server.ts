@@ -1,9 +1,10 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { ConfigurationError } from "@/lib/env/schema";
-import type { Database } from "@/server/db/database.types";
 import { getServerEnv } from "@/lib/env/server";
+import type { Database } from "@/server/db/database.types";
 
 /**
  * Client Supabase pour Server Components, Server Actions et Route Handlers.
@@ -21,6 +22,9 @@ export async function createSupabaseServerClient() {
     ]);
   }
 
+  // Données personnelles : toujours calculées à la requête, jamais pré-rendues.
+  // (Le client Supabase lit l'heure courante pour vérifier l'expiration de la session.)
+  await connection();
   const cookieStore = await cookies();
   return createServerClient<Database>(url, key, {
     cookies: {

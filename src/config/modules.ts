@@ -34,7 +34,7 @@ export const DEVELOPMENT_STAGES = {
 export type DevelopmentStage = keyof typeof DEVELOPMENT_STAGES;
 
 /** Étape de développement en cours — à faire évoluer à chaque livraison. */
-export const CURRENT_STAGE: DevelopmentStage = 3;
+export const CURRENT_STAGE: DevelopmentStage = 4;
 
 export interface AppModule {
   id: string;
@@ -91,14 +91,12 @@ export const APP_MODULES = [
     tagline: "Converser avec une IA qui vous connaît",
     icon: MessagesSquare,
     group: "core",
-    status: "planned",
+    status: "in_progress",
     stage: 4,
     capabilities: [
-      "Conversations persistantes et historique",
-      "Recherche dans les conversations",
-      "Réponses contextualisées par vos souvenirs",
-      "Affichage des souvenirs et sources utilisés",
-      "Pièces jointes",
+      "Réponses contextualisées par vos souvenirs (étape 5)",
+      "Affichage des souvenirs et sources utilisés (étape 5)",
+      "Pièces jointes (étape 6)",
     ],
   },
   {

@@ -17,6 +17,15 @@ const optionalString = z
 
 const optionalUrl = optionalString.pipe(z.url().optional());
 
+/** Nombre optionnel lu depuis une chaîne ("" ou absent → undefined). */
+const optionalNumber = (schema: z.ZodNumber) =>
+  z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value === undefined || value === "" ? undefined : Number(value)))
+    .pipe(schema.optional());
+
 /** Variables lisibles par le navigateur (préfixe NEXT_PUBLIC_). Aucune donnée secrète. */
 export const publicEnvSchema = z.object({
   NEXT_PUBLIC_APP_URL: optionalUrl,
@@ -33,6 +42,15 @@ export const serverEnvSchema = publicEnvSchema.extend({
   GEMINI_EMBEDDING_MODEL: optionalString,
   OPENAI_API_KEY: optionalString,
   ANTHROPIC_API_KEY: optionalString,
+  OPENAI_CHAT_MODEL: optionalString,
+  // Optionnel : remplace l'adresse du fournisseur (passerelle d'entreprise, serveur de test local).
+  AI_BASE_URL: optionalUrl,
+  // Tarifs (USD par million de jetons) servant à estimer le coût de chaque appel.
+  // Laissés vides, le coût est enregistré à 0 et signalé comme « non estimé ».
+  AI_PRICE_INPUT_USD_PER_MTOK: optionalNumber(z.number().nonnegative()),
+  AI_PRICE_OUTPUT_USD_PER_MTOK: optionalNumber(z.number().nonnegative()),
+  // Limites d'usage par utilisateur (protection des coûts).
+  CHAT_MAX_REQUESTS_PER_MINUTE: optionalNumber(z.number().int().positive()),
   SEARCH_PROVIDER: optionalString,
   SEARCH_API_KEY: optionalString,
 });

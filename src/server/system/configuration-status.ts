@@ -15,11 +15,11 @@ function check(env: ServerEnv, names: (keyof ServerEnv)[]): string[] {
   return names.filter((name) => !env[name]);
 }
 
-const AI_KEY_BY_PROVIDER = {
-  gemini: "GEMINI_API_KEY",
-  openai: "OPENAI_API_KEY",
-  anthropic: "ANTHROPIC_API_KEY",
-} as const satisfies Record<ServerEnv["AI_DEFAULT_PROVIDER"], keyof ServerEnv>;
+const AI_VARS_BY_PROVIDER = {
+  gemini: ["GEMINI_API_KEY", "GEMINI_CHAT_MODEL"],
+  openai: ["OPENAI_API_KEY", "OPENAI_CHAT_MODEL"],
+  anthropic: ["ANTHROPIC_API_KEY"],
+} as const satisfies Record<ServerEnv["AI_DEFAULT_PROVIDER"], readonly (keyof ServerEnv)[]>;
 
 /**
  * Calcule l'état de configuration des services externes.
@@ -28,7 +28,7 @@ const AI_KEY_BY_PROVIDER = {
 export function getConfigurationStatus(env: ServerEnv): ServiceStatus[] {
   const supabaseMissing = check(env, ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"]);
   const adminMissing = check(env, ["SUPABASE_SECRET_KEY"]);
-  const aiMissing = check(env, [AI_KEY_BY_PROVIDER[env.AI_DEFAULT_PROVIDER]]);
+  const aiMissing = check(env, [...AI_VARS_BY_PROVIDER[env.AI_DEFAULT_PROVIDER]]);
   const searchMissing = check(env, ["SEARCH_PROVIDER", "SEARCH_API_KEY"]);
 
   return [

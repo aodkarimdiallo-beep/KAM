@@ -7,10 +7,36 @@ L'état affiché dans l'application provient de `src/config/modules.ts` (`CURREN
 | 1 | Audit et planification | ✅ Terminé |
 | 2 | Fondations : Next.js, design system, navigation, pages, structure backend, clients Supabase | ✅ Livré |
 | 3 | Authentification (inscription, connexion, déconnexion), profil, schéma SQL, migrations, RLS, stockage privé, `proxy.ts` | 🟡 Base installée sur Supabase et vérifiée — reste le test d'inscription réel (voir ci-dessous) |
-| 4 | Couche AI Provider, Gemini, chat en streaming, historique, gestion du contexte, journal des coûts, limitation de débit | |
+| 4 | Couche AI Provider, Gemini, chat en streaming, historique, gestion du contexte, journal des coûts, limitation de débit | 🟡 Code livré et testé de bout en bout avec une IA simulée — reste la clé Gemini valide |
 | 5 | Mémoire : extraction, catégorisation, embeddings, recherche hybride, correction et validation, fusion des doublons | |
 | 6 | Documents (PDF, DOCX, TXT, CSV), recherche Internet avec sources, agents spécialisés et Agent Factory | |
 | 7 | Tests de bout en bout, revue de sécurité, accessibilité, déploiement Vercel | |
+
+## Étape 4 — le cerveau : ce qui a été livré
+
+- **Couche AI Provider** (`src/domain/ai`, `src/server/ai`) : un contrat unique (`AIProvider`) et un
+  fournisseur générique « compatible OpenAI » sans dépendance externe. Gemini (point d'accès OpenAI
+  de Google) et OpenAI fonctionnent par simple configuration ; Claude demandera un adaptateur dédié.
+- **Contexte** (`src/domain/chat/context.ts`) : consignes permanentes (le Twin est une IA, n'invente
+  rien, distingue ce qu'il sait de ce qu'il déduit), profil déclaré, date dans le fuseau de
+  l'utilisateur, historique récent limité par un budget (jamais toute la conversation).
+- **Route `/api/chat`** : réponse diffusée mot à mot (NDJSON), enregistrement du message, de la
+  réponse (même partielle), des jetons et de la latence ; erreurs du fournisseur traduites en
+  messages clairs.
+- **Coûts et limites** : migration 06 (`record_usage_event`, usage non falsifiable), estimation du
+  coût si les tarifs sont configurés, limite de messages par minute, quota mensuel optionnel.
+- **Interface AI Chat** : nouvelle conversation, liste, recherche (titres et contenu), suppression
+  avec confirmation, bouton « Arrêter », version mobile.
+- **Types de base générés** depuis Supabase (`src/server/db/database.types.ts`).
+
+**Vérifié** : 72 tests unitaires ; 41 tests de sécurité SQL ; scénario complet dans un vrai
+navigateur, contre le vrai Supabase, avec une **IA simulée** (serveur local imitant Gemini) :
+connexion, réponse en streaming, persistance après rechargement, recherche, suppression, limite
+de débit (3ᵉ message bloqué), requête invalide (400), accès sans session (401), usage enregistré.
+
+**Pas encore vérifié** : une réponse de la **vraie** IA Gemini. La clé enregistrée est refusée par
+Google (« clé invalide ») ; le modèle exact (`GEMINI_CHAT_MODEL`) sera choisi dans la liste des
+modèles disponibles dès qu'une clé valide sera en place.
 
 ## Étape 3 — ce qui a été livré
 
@@ -32,7 +58,7 @@ L'état affiché dans l'application provient de `src/config/modules.ts` (`CURREN
 - Settings → Profil modifiable ; menu utilisateur ; checklist du Dashboard reliée à l'état réel.
 
 **Vérifié** :
-- 37 tests de sécurité SQL exécutés sur un vrai PostgreSQL 16 + pgvector (`npm run test:db`) ;
+- 41 tests de sécurité SQL exécutés (à jour à l'étape 4) sur un vrai PostgreSQL 16 + pgvector (`npm run test:db`) ;
 - 42 tests unitaires ; lint ; TypeScript ; build de production ;
 - navigateur : redirections, erreurs de formulaire, message « service injoignable » (ce test a révélé
   puis permis de corriger un faux message de succès).

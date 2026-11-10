@@ -61,8 +61,9 @@ select tests.ok(
   and not has_function_privilege('authenticated', 'public.record_memory_revision()', 'execute'),
   'les fonctions internes ne sont pas appelables via l''API');
 select tests.ok(
-  not has_function_privilege('anon', 'public.record_audit_event(text, text, text, jsonb)', 'execute'),
-  'un visiteur non connecté ne peut pas écrire dans le journal');
+  not has_function_privilege('anon', 'public.record_audit_event(text, text, text, jsonb)', 'execute')
+  and not has_function_privilege('anon', 'public.record_usage_event(text, text, text, integer, integer, numeric, integer)', 'execute'),
+  'un visiteur non connecté ne peut écrire ni dans le journal ni dans l''usage');
 
 -- ── Visiteur non connecté ───────────────────────────────────────────────────
 set local role anon;
@@ -130,6 +131,19 @@ select tests.rejects(
   $$insert into public.usage_events (user_id, provider, model, operation) values ('00000000-0000-0000-0000-00000000000a', 'gemini', 'm', 'chat')$$,
   'l''utilisateur ne peut pas écrire son propre usage');
 
+-- Usage IA : écrit uniquement via la fonction dédiée, toujours au nom de l'appelant
+select public.record_usage_event('gemini', 'modele-test', 'chat', 120, 80, 0.0001, 900);
+select tests.ok(
+  (select count(*) from public.usage_events where user_id = '00000000-0000-0000-0000-00000000000a') = 1,
+  'l''usage IA est enregistré au nom de l''utilisateur connecté');
+select tests.rejects(
+  $$select public.record_usage_event('gemini', 'm', 'inconnu', 1, 1)$$,
+  'une opération d''usage inconnue est refusée');
+select public.record_usage_event('gemini', 'm', 'chat', -500, -500, -1);
+select tests.ok(
+  (select min(input_tokens) from public.usage_events) >= 0 and (select min(cost_usd) from public.usage_events) >= 0,
+  'l''usage ne peut pas être diminué avec des valeurs négatives');
+
 -- Agents : un seul Master Agent
 insert into public.agents (slug, name, is_master) values ('master', 'Master Agent', true);
 select tests.rejects($$insert into public.agents (slug, name, is_master) values ('master-2', 'Autre', true)$$, 'un seul Master Agent par utilisateur');
@@ -155,6 +169,7 @@ select tests.ok((select count(*) from public.messages) = 0, 'Bob ne voit pas les
 select tests.ok((select count(*) from public.memories) = 0, 'Bob ne voit pas la mémoire d''Alice');
 select tests.ok((select count(*) from public.memory_revisions) = 0, 'Bob ne voit pas les révisions d''Alice');
 select tests.ok((select count(*) from public.audit_logs) = 0, 'Bob ne voit pas le journal d''Alice');
+select tests.ok((select count(*) from public.usage_events) = 0, 'Bob ne voit pas l''usage IA d''Alice');
 select tests.ok((select count(*) from storage.objects) = 0, 'Bob ne voit pas les fichiers d''Alice');
 
 update public.memories set content = 'piraté';
