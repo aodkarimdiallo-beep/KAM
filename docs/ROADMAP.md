@@ -6,7 +6,7 @@ L'état affiché dans l'application provient de `src/config/modules.ts` (`CURREN
 | --- | --- | --- |
 | 1 | Audit et planification | ✅ Terminé |
 | 2 | Fondations : Next.js, design system, navigation, pages, structure backend, clients Supabase | ✅ Livré |
-| 3 | Authentification (inscription, connexion, déconnexion), profil, schéma SQL, migrations, RLS, stockage privé, `proxy.ts` | 🟡 Code livré et testé localement — reste à brancher sur Supabase (voir ci-dessous) |
+| 3 | Authentification (inscription, connexion, déconnexion), profil, schéma SQL, migrations, RLS, stockage privé, `proxy.ts` | 🟡 Base installée sur Supabase et vérifiée — reste le test d'inscription réel (voir ci-dessous) |
 | 4 | Couche AI Provider, Gemini, chat en streaming, historique, gestion du contexte, journal des coûts, limitation de débit | |
 | 5 | Mémoire : extraction, catégorisation, embeddings, recherche hybride, correction et validation, fusion des doublons | |
 | 6 | Documents (PDF, DOCX, TXT, CSV), recherche Internet avec sources, agents spécialisés et Agent Factory | |
@@ -14,7 +14,7 @@ L'état affiché dans l'application provient de `src/config/modules.ts` (`CURREN
 
 ## Étape 3 — ce qui a été livré
 
-**Base de données** (`supabase/migrations/`, 4 migrations versionnées) :
+**Base de données** (`supabase/migrations/`, 5 migrations versionnées) :
 - 19 tables : profils, réglages, conversations, messages, documents et extraits, mémoire, sources et
   révisions de souvenirs, projets, tâches de projet, objectifs, décisions, agents, outils, exécutions,
   tâches/approbations, journal d'audit, usage IA.
@@ -32,14 +32,27 @@ L'état affiché dans l'application provient de `src/config/modules.ts` (`CURREN
 - Settings → Profil modifiable ; menu utilisateur ; checklist du Dashboard reliée à l'état réel.
 
 **Vérifié** :
-- 35 tests de sécurité SQL exécutés sur un vrai PostgreSQL 16 + pgvector (`npm run test:db`) ;
+- 37 tests de sécurité SQL exécutés sur un vrai PostgreSQL 16 + pgvector (`npm run test:db`) ;
 - 42 tests unitaires ; lint ; TypeScript ; build de production ;
 - navigateur : redirections, erreurs de formulaire, message « service injoignable » (ce test a révélé
   puis permis de corriger un faux message de succès).
 
-**Pas encore vérifié** : le parcours complet avec le vrai projet Supabase (inscription, e-mail,
-connexion réelle). L'environnement de développement n'a pas accès à Supabase. Prochaine action :
-suivre [`docs/SUPABASE_SETUP.md`](SUPABASE_SETUP.md), puis tester ensemble.
+**Installé sur Supabase (10/11/2026)** : les 5 migrations ont été appliquées au projet
+`khjrfjnjgeywrlqdqsve` via le connecteur Supabase. Vérifications : 19 tables, toutes avec RLS ;
+bucket `documents` privé ; conseiller de sécurité Supabase sans alerte sur nos fonctions (la
+migration 05 corrige les deux qu'il avait signalées). Alertes restantes, assumées :
+`record_audit_event` (appelable par un utilisateur connecté, par conception) et `rls_auto_enable`
+(fonction fournie par Supabase qui active la RLS sur toute nouvelle table).
+
+**Vérifié contre le vrai Supabase** : l'application joint le service d'authentification ;
+une connexion avec un mauvais mot de passe renvoie bien « incorrect ».
+
+**Pas encore vérifié** : une inscription complète (e-mail de confirmation, puis connexion).
+Le service d'e-mail intégré de Supabase est limité à quelques envois par heure et la limite a
+été atteinte pendant les tests. Le test se fera avec l'adresse du fondateur.
+
+> Note pour le développement dans l'environnement cloud Claude : Node.js n'utilise pas le proxy
+> réseau par défaut. Lancer le serveur avec `NODE_USE_ENV_PROXY=1 npm start` (inutile sur Vercel).
 
 ## Étape 2 — ce qui a été livré
 

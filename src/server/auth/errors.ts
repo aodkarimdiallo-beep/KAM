@@ -20,7 +20,12 @@ export function authErrorMessage(code: string | undefined, fallback = "Une erreu
       return "Confirmez d'abord votre adresse e-mail grâce au lien reçu.";
     case "weak_password":
       return "Mot de passe trop faible. Choisissez-en un plus long et plus varié.";
+    case "email_address_invalid":
+      return "Cette adresse e-mail est refusée. Utilisez une adresse réelle que vous consultez.";
+    case "email_address_not_authorized":
+      return "L'envoi d'e-mails vers cette adresse n'est pas encore autorisé (service d'e-mail en mode test).";
     case "over_email_send_rate_limit":
+      return "Trop d'e-mails envoyés récemment. Réessayez dans une heure.";
     case "over_request_rate_limit":
       return "Trop de tentatives. Patientez quelques minutes avant de réessayer.";
     case "signup_disabled":

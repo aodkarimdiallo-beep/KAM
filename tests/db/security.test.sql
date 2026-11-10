@@ -53,6 +53,17 @@ select tests.ok(
   (select display_name from public.profiles where id = '00000000-0000-0000-0000-00000000000a') = 'Alice',
   'le nom choisi à l''inscription est repris dans le profil');
 
+-- ── Fonctions internes (triggers SECURITY DEFINER) ──────────────────────────
+select tests.ok(
+  not has_function_privilege('anon', 'public.handle_new_user()', 'execute')
+  and not has_function_privilege('authenticated', 'public.handle_new_user()', 'execute')
+  and not has_function_privilege('anon', 'public.record_memory_revision()', 'execute')
+  and not has_function_privilege('authenticated', 'public.record_memory_revision()', 'execute'),
+  'les fonctions internes ne sont pas appelables via l''API');
+select tests.ok(
+  not has_function_privilege('anon', 'public.record_audit_event(text, text, text, jsonb)', 'execute'),
+  'un visiteur non connecté ne peut pas écrire dans le journal');
+
 -- ── Visiteur non connecté ───────────────────────────────────────────────────
 set local role anon;
 select tests.rejects('select * from public.profiles', 'anon ne peut pas lire les profils');

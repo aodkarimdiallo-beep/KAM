@@ -8,6 +8,9 @@ Comptez 15 minutes.
 
 ## Étape A — Créer les tables (copier-coller)
 
+> ✅ **Déjà fait** pour le projet `khjrfjnjgeywrlqdqsve` (10/11/2026), migrations 01 à 05 appliquées
+> via le connecteur Supabase. Cette étape ne sert que pour un nouveau projet.
+
 La base est vide au départ. Il faut y « installer » les tables, c'est-à-dire les tiroirs
 où DIGITAL TWIN rangera vos informations.
 
@@ -15,7 +18,7 @@ où DIGITAL TWIN rangera vos informations.
 2. Dans le menu de gauche, cliquez sur **SQL Editor** (icône `>_`).
 3. Cliquez sur **New query** (nouvelle requête).
 4. Sur GitHub, ouvrez le dossier `supabase/migrations` du dépôt KAM.
-5. Pour **chaque fichier, dans l'ordre** (01, puis 02, puis 03, puis 04) :
+5. Pour **chaque fichier, dans l'ordre** (01, puis 02, 03, 04 et 05) :
    - ouvrez le fichier, cliquez sur l'icône **Copier** (deux petits carrés) ;
    - collez tout dans l'éditeur Supabase (en remplaçant ce qu'il contient) ;
    - cliquez sur **Run** (en bas à droite) ;
@@ -27,6 +30,7 @@ où DIGITAL TWIN rangera vos informations.
 | 2 | `20261102000200_projects.sql` |
 | 3 | `20261102000300_knowledge.sql` |
 | 4 | `20261102000400_agents_and_operations.sql` |
+| 5 | `20261110000500_harden_function_privileges.sql` |
 
 > Si un message rouge apparaît, ne relancez pas le même fichier : faites une capture d'écran et
 > envoyez-la. Chaque fichier ne doit être exécuté qu'**une seule fois**.

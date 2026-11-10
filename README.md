@@ -30,7 +30,7 @@ L'application démarre même sans configuration : la page **Settings** indique q
 | `npm run typecheck` | Génération des types de routes + TypeScript strict |
 | `npm test` | Tests unitaires (Vitest) |
 | `npm run check` | Les trois vérifications d'un coup |
-| `npm run test:db` | Migrations + 35 tests de sécurité SQL sur un PostgreSQL local jetable (`DATABASE_ADMIN_URL`) |
+| `npm run test:db` | Migrations + 37 tests de sécurité SQL sur un PostgreSQL local jetable (`DATABASE_ADMIN_URL`) |
 
 ## Stack
 

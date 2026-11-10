@@ -8,6 +8,7 @@ Schéma versionné de la base. Guide d'application pas à pas : [`docs/SUPABASE_
 | `…000200_projects.sql` | Projets, tâches de projet, objectifs, décisions |
 | `…000300_knowledge.sql` | Conversations, messages, documents, mémoire, sources, révisions |
 | `…000400_agents_and_operations.sql` | Agents, approbations, audit, usage IA, stockage privé |
+| `…000500_harden_function_privileges.sql` | Fonctions internes non appelables via l'API |
 
 Règles :
 - une migration déjà appliquée n'est **jamais modifiée** : on en crée une nouvelle ;
